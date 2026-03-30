@@ -4,7 +4,7 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
     maxDisplayedReviews = 5
     showAllReviewsLink = true
 
-    reviews = ${GoogleReviews.getReviews(props.placeId)}
+    reviews = ${GoogleReviews.getReviews(props.placeId) || []}
     limitedReviews = ${Array.slice(props.reviews, 0, props.maxDisplayedReviews)}
     allReviewsUrl = ${'https://search.google.com/local/reviews?placeid=' + props.placeId}
 

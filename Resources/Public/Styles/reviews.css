@@ -1,7 +1,17 @@
+.google-reviews {
+    --reviews-count: 5;
+}
+
 .google-reviews__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(var(--reviews-count), 1fr);
     gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .google-reviews__grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .google-reviews__card {

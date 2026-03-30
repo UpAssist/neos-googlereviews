@@ -6,17 +6,13 @@
                 <source>Google Reviews</source>
                 <target>Google Reviews</target>
             </trans-unit>
+            <trans-unit id="groups.reviews">
+                <source>Reviews</source>
+                <target>Reviews</target>
+            </trans-unit>
             <trans-unit id="ui.help.message">
                 <source>Displays Google Reviews from the configured location</source>
                 <target>Toont Google Reviews van de geconfigureerde locatie</target>
-            </trans-unit>
-            <trans-unit id="properties.overridePlaceId">
-                <source>Google Place ID (optional)</source>
-                <target>Google Place ID (optioneel)</target>
-            </trans-unit>
-            <trans-unit id="properties.overridePlaceId.help.message">
-                <source>Leave empty to use the Place ID from the site configuration</source>
-                <target>Laat leeg om het Place ID van de site-configuratie te gebruiken</target>
             </trans-unit>
             <trans-unit id="properties.showAuthorPhoto">
                 <source>Show author photo</source>
@@ -25,6 +21,10 @@
             <trans-unit id="properties.maxDisplayedReviews">
                 <source>Maximum number of reviews</source>
                 <target>Maximum aantal reviews</target>
+            </trans-unit>
+            <trans-unit id="properties.maxDisplayedReviews.ui.help.message">
+                <source>The Google Places API returns a maximum of 5 reviews. This is a hard limit set by Google and cannot be changed.</source>
+                <target>De Google Places API levert maximaal 5 reviews. Dit is een harde limiet van Google en kan niet worden aangepast.</target>
             </trans-unit>
             <trans-unit id="properties.showAllReviewsLink">
                 <source>Show link to all reviews</source>

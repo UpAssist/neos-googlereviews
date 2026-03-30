@@ -11,8 +11,8 @@
             <trans-unit id="properties.googlePlaceId">
                 <source>Google Place ID</source>
             </trans-unit>
-            <trans-unit id="properties.googlePlaceId.help.message">
-                <source>The Place ID of your business on Google Maps. Find it at https://developers.google.com/maps/documentation/places/web-service/place-id</source>
+            <trans-unit id="properties.googlePlaceId.ui.help.message">
+                <source>Find your Place ID: search your business on Google Maps, click the name, and copy the Place ID from the URL. Or run: ./flow googlereviews:findplaceid "Your Business Name"</source>
             </trans-unit>
         </body>
     </file>

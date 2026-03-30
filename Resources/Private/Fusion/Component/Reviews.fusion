@@ -8,7 +8,7 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
     allReviewsUrl = ${'https://search.google.com/local/reviews?placeid=' + props.placeId}
 
     renderer = afx`
-        <div class="google-reviews" @if={props.reviews}>
+        <div class="google-reviews" @if={props.reviews} style={'--reviews-count: ' + props.maxDisplayedReviews}>
             <link rel="stylesheet" href={StaticResource.uri('UpAssist.Neos.GoogleReviews', 'Public/Styles/reviews.css')} />
             <div class="google-reviews__grid">
                 <Neos.Fusion:Loop items={props.reviews} itemName="review" iterationName="iterator">

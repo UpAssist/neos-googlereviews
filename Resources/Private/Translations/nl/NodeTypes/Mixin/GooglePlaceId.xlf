@@ -14,9 +14,9 @@
                 <source>Google Place ID</source>
                 <target>Google Place ID</target>
             </trans-unit>
-            <trans-unit id="properties.googlePlaceId.help.message">
-                <source>The Place ID of your business on Google Maps. Find it at https://developers.google.com/maps/documentation/places/web-service/place-id</source>
-                <target>Het Place ID van uw bedrijf op Google Maps. Vind het op https://developers.google.com/maps/documentation/places/web-service/place-id</target>
+            <trans-unit id="properties.googlePlaceId.ui.help.message">
+                <source>Find your Place ID: search your business on Google Maps, click the name, and copy the Place ID from the URL. Or run: ./flow googlereviews:findplaceid "Your Business Name"</source>
+                <target>Vind je Place ID: zoek je bedrijf op Google Maps, klik op de naam en kopieer het Place ID uit de URL. Of draai: ./flow googlereviews:findplaceid "Naam Bedrijf"</target>
             </trans-unit>
         </body>
     </file>

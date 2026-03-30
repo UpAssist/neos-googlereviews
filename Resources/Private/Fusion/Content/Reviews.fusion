@@ -1,5 +1,5 @@
 prototype(UpAssist.Neos.GoogleReviews:Content.Reviews) < prototype(Neos.Neos:ContentComponent) {
-    placeId = ${q(node).property('overridePlaceId') || q(site).property('googlePlaceId') || ''}
+    placeId = ${q(site).property('googlePlaceId') || ''}
     showAuthorPhoto = ${q(node).property('showAuthorPhoto')}
     maxDisplayedReviews = ${q(node).property('maxDisplayedReviews')}
     showAllReviewsLink = ${q(node).property('showAllReviewsLink')}

@@ -17,9 +17,9 @@ class GoogleReviewsHelper implements ProtectedContextAwareInterface
      */
     protected $googleReviewsService;
 
-    public function getReviews(string $placeId = ''): array
+    public function getReviews(string $placeId = null): array
     {
-        return $this->googleReviewsService->getReviews($placeId);
+        return $this->googleReviewsService->getReviews((string)$placeId) ?: [];
     }
 
     public function allowsCallOfMethod($methodName): bool

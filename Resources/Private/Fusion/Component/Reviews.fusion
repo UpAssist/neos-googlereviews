@@ -33,15 +33,4 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
             <p>Geen Google Reviews gevonden. Controleer het Place ID en de API-sleutel in de instellingen.</p>
         </div>
     `
-
-    @cache {
-        mode = 'cached'
-        maximumLifetime = 3600
-        entryIdentifier {
-            node = ${Neos.Caching.nodeTag(node)}
-        }
-        entryTags {
-            1 = ${Neos.Caching.nodeTag(node)}
-        }
-    }
 }

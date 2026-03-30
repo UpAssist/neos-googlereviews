@@ -1,6 +1,9 @@
 UpAssist:
   Neos:
     GoogleReviews:
+      # 'legacy' = maps.googleapis.com (widely enabled, query-string auth)
+      # 'new'    = places.googleapis.com/v1 (requires separate enablement, header auth)
+      apiVersion: 'legacy'
       apiKey: ''
       defaultPlaceId: ''
       cacheLifetime: 86400

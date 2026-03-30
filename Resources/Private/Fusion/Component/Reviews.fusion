@@ -5,15 +5,15 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
     showAllReviewsLink = true
 
     reviews = ${GoogleReviews.getReviews(props.placeId)}
-    limitedReviews = ${props.reviews ? Array.slice(props.reviews, 0, props.maxDisplayedReviews) : props.reviews}
     allReviewsUrl = ${'https://search.google.com/local/reviews?placeid=' + props.placeId}
 
     renderer = afx`
-        <div class="google-reviews" @if={props.limitedReviews}>
+        <div class="google-reviews" @if={props.reviews}>
             <link rel="stylesheet" href={StaticResource.uri('UpAssist.Neos.GoogleReviews', 'Public/Styles/reviews.css')} />
             <div class="google-reviews__grid">
-                <Neos.Fusion:Loop items={props.limitedReviews} itemName="review">
+                <Neos.Fusion:Loop items={props.reviews} itemName="review" iterationName="iterator">
                     <UpAssist.Neos.GoogleReviews:Component.ReviewCard
+                        @if={iterator.index < props.maxDisplayedReviews}
                         authorName={review.authorName}
                         rating={review.rating}
                         text={review.text}
@@ -28,9 +28,6 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
                     Bekijk alle reviews op Google
                 </a>
             </div>
-        </div>
-        <div @if={!props.limitedReviews && node.context.inBackend} class="google-reviews google-reviews--empty">
-            <p>Geen Google Reviews gevonden. Controleer het Place ID en de API-sleutel in de instellingen.</p>
         </div>
     `
 }

@@ -1,0 +1,9 @@
+UpAssist\Neos\GoogleReviews\Service\GoogleReviewsService:
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: UpAssist_Neos_GoogleReviews_Reviews

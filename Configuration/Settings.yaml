@@ -1,0 +1,22 @@
+UpAssist:
+  Neos:
+    GoogleReviews:
+      apiKey: ''
+      defaultPlaceId: ''
+      cacheLifetime: 86400
+      maxReviews: 5
+      language: 'nl'
+
+Neos:
+  Neos:
+    userInterface:
+      translation:
+        autoInclude:
+          UpAssist.Neos.GoogleReviews:
+            - '*'
+    fusion:
+      autoInclude:
+        UpAssist.Neos.GoogleReviews: true
+  Fusion:
+    defaultContext:
+      GoogleReviews: UpAssist\Neos\GoogleReviews\Eel\GoogleReviewsHelper

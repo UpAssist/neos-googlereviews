@@ -1,0 +1,47 @@
+prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion:Component) {
+    placeId = ''
+    showAuthorPhoto = true
+    maxDisplayedReviews = 5
+    showAllReviewsLink = true
+
+    reviews = ${GoogleReviews.getReviews(props.placeId)}
+    limitedReviews = ${Array.slice(props.reviews, 0, props.maxDisplayedReviews)}
+    allReviewsUrl = ${'https://search.google.com/local/reviews?placeid=' + props.placeId}
+
+    renderer = afx`
+        <div class="google-reviews" @if={props.limitedReviews}>
+            <link rel="stylesheet" href={StaticResource.uri('UpAssist.Neos.GoogleReviews', 'Public/Styles/reviews.css')} />
+            <div class="google-reviews__grid">
+                <Neos.Fusion:Loop items={props.limitedReviews} itemName="review">
+                    <UpAssist.Neos.GoogleReviews:Component.ReviewCard
+                        authorName={review.authorName}
+                        rating={review.rating}
+                        text={review.text}
+                        relativePublishTime={review.relativePublishTime}
+                        profilePhotoUrl={review.profilePhotoUrl}
+                        showAuthorPhoto={props.showAuthorPhoto}
+                    />
+                </Neos.Fusion:Loop>
+            </div>
+            <div class="google-reviews__footer" @if={props.showAllReviewsLink && props.placeId}>
+                <a href={props.allReviewsUrl} target="_blank" rel="noopener noreferrer" class="google-reviews__all-link">
+                    Bekijk alle reviews op Google
+                </a>
+            </div>
+        </div>
+        <div @if={!props.limitedReviews && node.context.inBackend} class="google-reviews google-reviews--empty">
+            <p>Geen Google Reviews gevonden. Controleer het Place ID en de API-sleutel in de instellingen.</p>
+        </div>
+    `
+
+    @cache {
+        mode = 'cached'
+        maximumLifetime = 3600
+        entryIdentifier {
+            node = ${Neos.Caching.nodeTag(node)}
+        }
+        entryTags {
+            1 = ${Neos.Caching.nodeTag(node)}
+        }
+    }
+}

@@ -1,0 +1,29 @@
+prototype(UpAssist.Neos.GoogleReviews:Component.ReviewCard) < prototype(Neos.Fusion:Component) {
+    authorName = ''
+    rating = 0
+    text = ''
+    relativePublishTime = ''
+    profilePhotoUrl = ''
+    showAuthorPhoto = true
+
+    renderer = afx`
+        <div class="google-reviews__card">
+            <div class="google-reviews__header">
+                <img @if={props.showAuthorPhoto && props.profilePhotoUrl}
+                     src={props.profilePhotoUrl}
+                     alt={props.authorName}
+                     class="google-reviews__avatar"
+                     width="40"
+                     height="40"
+                     loading="lazy"
+                     referrerpolicy="no-referrer" />
+                <div class="google-reviews__meta">
+                    <span class="google-reviews__author">{props.authorName}</span>
+                    <span class="google-reviews__date">{props.relativePublishTime}</span>
+                </div>
+            </div>
+            <UpAssist.Neos.GoogleReviews:Component.StarRating rating={props.rating} />
+            <p class="google-reviews__text" @if={props.text}>{props.text}</p>
+        </div>
+    `
+}

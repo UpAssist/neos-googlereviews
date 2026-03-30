@@ -1,0 +1,11 @@
+prototype(UpAssist.Neos.GoogleReviews:Component.StarRating) < prototype(Neos.Fusion:Component) {
+    rating = 0
+
+    renderer = afx`
+        <div class="google-reviews__stars" role="img" aria-label={props.rating + ' van 5 sterren'}>
+            <Neos.Fusion:Loop items={Array.range(1, 5)} itemName="star">
+                <span class={'google-reviews__star' + (star <= props.rating ? ' google-reviews__star--filled' : '')}>&#9733;</span>
+            </Neos.Fusion:Loop>
+        </div>
+    `
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file original="" product-name="UpAssist.Neos.GoogleReviews" source-language="en" datatype="plaintext">
+        <body>
+            <trans-unit id="tabs.googleReviews">
+                <source>Google Reviews</source>
+            </trans-unit>
+            <trans-unit id="groups.googleReviews">
+                <source>Google Reviews</source>
+            </trans-unit>
+            <trans-unit id="properties.googlePlaceId">
+                <source>Google Place ID</source>
+            </trans-unit>
+            <trans-unit id="properties.googlePlaceId.help.message">
+                <source>The Place ID of your business on Google Maps. Find it at https://developers.google.com/maps/documentation/places/web-service/place-id</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

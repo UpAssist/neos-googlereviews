@@ -5,11 +5,20 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
     showAllReviewsLink = true
 
     reviews = ${GoogleReviews.getReviews(props.placeId)}
+    rating = ${GoogleReviews.getRating(props.placeId)}
+    totalReviews = ${GoogleReviews.getTotalReviews(props.placeId)}
     allReviewsUrl = ${'https://search.google.com/local/reviews?placeid=' + props.placeId}
 
     renderer = afx`
         <div class="google-reviews" @if={props.reviews} style={'--reviews-count: ' + props.maxDisplayedReviews}>
             <link rel="stylesheet" href={StaticResource.uri('UpAssist.Neos.GoogleReviews', 'Public/Styles/reviews.css')} />
+            <div class="google-reviews__summary" @if={props.rating}>
+                <div class="google-reviews__rating-score">{String.toString(props.rating)}</div>
+                <div class="google-reviews__rating-details">
+                    <UpAssist.Neos.GoogleReviews:Component.StarRating rating={Math.round(props.rating)} />
+                    <span class="google-reviews__rating-count">{props.totalReviews} reviews op Google</span>
+                </div>
+            </div>
             <div class="google-reviews__grid">
                 <Neos.Fusion:Loop items={props.reviews} itemName="review" iterationName="iterator">
                     <UpAssist.Neos.GoogleReviews:Component.ReviewCard
@@ -24,7 +33,7 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
                 </Neos.Fusion:Loop>
             </div>
             <div class="google-reviews__footer" @if={props.showAllReviewsLink && props.placeId}>
-                <a href={props.allReviewsUrl} target="_blank" rel="noopener noreferrer" class="google-reviews__all-link">
+                <a href={props.allReviewsUrl} target="_blank" rel="noopener noreferrer" class="button button--primary">
                     Bekijk alle reviews op Google
                 </a>
             </div>

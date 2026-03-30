@@ -63,14 +63,19 @@ class GoogleReviewsCommandController extends CommandController
     {
         $this->outputLine('Fetching Google Reviews...');
 
-        $reviews = $this->googleReviewsService->fetchAndCacheReviews($placeId);
+        $data = $this->googleReviewsService->fetchAndCacheReviews($placeId);
+        $reviews = $data['reviews'] ?? [];
 
         if (empty($reviews)) {
             $this->outputLine('<error>No reviews found. Check your API key and Place ID.</error>');
             return;
         }
 
-        $this->outputLine('<success>Cached %d review(s) successfully.</success>', [count($reviews)]);
+        $this->outputLine('<success>Cached %d review(s) — Rating: %s/5 (%d total reviews)</success>', [
+            count($reviews),
+            $data['rating'] ?? '-',
+            $data['totalReviews'] ?? 0,
+        ]);
 
         foreach ($reviews as $review) {
             $this->outputLine(

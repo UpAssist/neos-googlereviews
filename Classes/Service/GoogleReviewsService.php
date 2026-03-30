@@ -83,7 +83,7 @@ class GoogleReviewsService
     {
         $language = $this->settings['language'] ?? 'nl';
         $url = sprintf(
-            'https://maps.googleapis.com/maps/api/place/details/json?place_id=%s&fields=reviews&language=%s&key=%s',
+            'https://maps.googleapis.com/maps/api/place/details/json?place_id=%s&fields=reviews,rating,user_ratings_total&language=%s&key=%s',
             urlencode($placeId),
             urlencode($language),
             urlencode($apiKey)
@@ -102,29 +102,29 @@ class GoogleReviewsService
             return $this->getCachedFallback($placeId);
         }
 
-        $reviews = $data['result']['reviews'] ?? [];
-        if (empty($reviews)) {
-            return [];
-        }
-
         $maxReviews = (int)($this->settings['maxReviews'] ?? 5);
+        $reviews = $data['result']['reviews'] ?? [];
 
-        return array_map(function (array $review) {
-            return [
-                'authorName' => $review['author_name'] ?? '',
-                'rating' => (int)($review['rating'] ?? 0),
-                'text' => $review['text'] ?? '',
-                'relativePublishTime' => $review['relative_time_description'] ?? '',
-                'profilePhotoUrl' => $review['profile_photo_url'] ?? '',
-            ];
-        }, array_slice($reviews, 0, $maxReviews));
+        return [
+            'rating' => (float)($data['result']['rating'] ?? 0),
+            'totalReviews' => (int)($data['result']['user_ratings_total'] ?? 0),
+            'reviews' => array_map(function (array $review) {
+                return [
+                    'authorName' => $review['author_name'] ?? '',
+                    'rating' => (int)($review['rating'] ?? 0),
+                    'text' => $review['text'] ?? '',
+                    'relativePublishTime' => $review['relative_time_description'] ?? '',
+                    'profilePhotoUrl' => $review['profile_photo_url'] ?? '',
+                ];
+            }, array_slice($reviews, 0, $maxReviews)),
+        ];
     }
 
     protected function fetchFromNewApi(string $placeId, string $apiKey): array
     {
         $language = $this->settings['language'] ?? 'nl';
         $url = sprintf(
-            'https://places.googleapis.com/v1/places/%s?fields=reviews&languageCode=%s',
+            'https://places.googleapis.com/v1/places/%s?fields=reviews,rating,userRatingCount&languageCode=%s',
             urlencode($placeId),
             urlencode($language)
         );
@@ -146,21 +146,22 @@ class GoogleReviewsService
             return $this->getCachedFallback($placeId);
         }
 
-        if (!isset($data['reviews']) || !is_array($data['reviews'])) {
-            return [];
-        }
-
         $maxReviews = (int)($this->settings['maxReviews'] ?? 5);
+        $reviews = $data['reviews'] ?? [];
 
-        return array_map(function (array $review) {
-            return [
-                'authorName' => $review['authorAttribution']['displayName'] ?? '',
-                'rating' => (int)($review['rating'] ?? 0),
-                'text' => $review['text']['text'] ?? '',
-                'relativePublishTime' => $review['relativePublishTimeDescription'] ?? '',
-                'profilePhotoUrl' => $review['authorAttribution']['photoUri'] ?? '',
-            ];
-        }, array_slice($data['reviews'], 0, $maxReviews));
+        return [
+            'rating' => (float)($data['rating'] ?? 0),
+            'totalReviews' => (int)($data['userRatingCount'] ?? 0),
+            'reviews' => array_map(function (array $review) {
+                return [
+                    'authorName' => $review['authorAttribution']['displayName'] ?? '',
+                    'rating' => (int)($review['rating'] ?? 0),
+                    'text' => $review['text']['text'] ?? '',
+                    'relativePublishTime' => $review['relativePublishTimeDescription'] ?? '',
+                    'profilePhotoUrl' => $review['authorAttribution']['photoUri'] ?? '',
+                ];
+            }, array_slice($reviews, 0, $maxReviews)),
+        ];
     }
 
     /**

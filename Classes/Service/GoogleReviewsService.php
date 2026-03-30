@@ -72,18 +72,15 @@ class GoogleReviewsService
 
         $language = $this->settings['language'] ?? 'nl';
         $url = sprintf(
-            'https://places.googleapis.com/v1/places/%s?fields=reviews&languageCode=%s',
+            'https://maps.googleapis.com/maps/api/place/details/json?place_id=%s&fields=reviews&language=%s&key=%s',
             urlencode($placeId),
-            urlencode($language)
+            urlencode($language),
+            urlencode($apiKey)
         );
 
         $context = stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => [
-                    'Content-Type: application/json',
-                    'X-Goog-Api-Key: ' . $apiKey,
-                ],
                 'timeout' => 10,
                 'ignore_errors' => true,
             ],
@@ -98,13 +95,14 @@ class GoogleReviewsService
 
         $data = json_decode($response, true);
 
-        if (!is_array($data) || isset($data['error'])) {
-            $errorMessage = $data['error']['message'] ?? 'Unknown error';
+        if (!is_array($data) || ($data['status'] ?? '') !== 'OK') {
+            $errorMessage = $data['error_message'] ?? ($data['status'] ?? 'Unknown error');
             $this->logger->error('UpAssist.Neos.GoogleReviews: API error — ' . $errorMessage);
             return $this->getCachedFallback($placeId);
         }
 
-        if (!isset($data['reviews']) || !is_array($data['reviews'])) {
+        $reviews = $data['result']['reviews'] ?? [];
+        if (empty($reviews)) {
             return [];
         }
 
@@ -112,13 +110,13 @@ class GoogleReviewsService
 
         return array_map(function (array $review) {
             return [
-                'authorName' => $review['authorAttribution']['displayName'] ?? '',
+                'authorName' => $review['author_name'] ?? '',
                 'rating' => (int)($review['rating'] ?? 0),
-                'text' => $review['text']['text'] ?? '',
-                'relativePublishTime' => $review['relativePublishTimeDescription'] ?? '',
-                'profilePhotoUrl' => $review['authorAttribution']['photoUri'] ?? '',
+                'text' => $review['text'] ?? '',
+                'relativePublishTime' => $review['relative_time_description'] ?? '',
+                'profilePhotoUrl' => $review['profile_photo_url'] ?? '',
             ];
-        }, array_slice($data['reviews'], 0, $maxReviews));
+        }, array_slice($reviews, 0, $maxReviews));
     }
 
     protected function getCachedFallback(string $placeId): array

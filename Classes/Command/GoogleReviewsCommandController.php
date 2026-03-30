@@ -37,18 +37,15 @@ class GoogleReviewsCommandController extends CommandController
 
         $this->outputLine('Searching for "%s"...', [$query]);
 
-        $url = 'https://places.googleapis.com/v1/places:searchText';
-        $payload = json_encode(['textQuery' => $query]);
+        $url = sprintf(
+            'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=%s&inputtype=textquery&fields=place_id,name,formatted_address,rating,user_ratings_total&key=%s',
+            urlencode($query),
+            urlencode($apiKey)
+        );
 
         $context = stream_context_create([
             'http' => [
-                'method' => 'POST',
-                'header' => implode("\r\n", [
-                    'Content-Type: application/json',
-                    'X-Goog-Api-Key: ' . $apiKey,
-                    'X-Goog-FieldMask: places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount',
-                ]),
-                'content' => $payload,
+                'method' => 'GET',
                 'timeout' => 10,
                 'ignore_errors' => true,
             ],
@@ -63,27 +60,27 @@ class GoogleReviewsCommandController extends CommandController
 
         $data = json_decode($response, true);
 
-        if (!is_array($data) || isset($data['error'])) {
-            $errorMessage = $data['error']['message'] ?? 'Unknown error';
+        if (!is_array($data) || ($data['status'] ?? '') !== 'OK') {
+            $errorMessage = $data['error_message'] ?? ($data['status'] ?? 'Unknown error');
             $this->outputLine('<error>API error: %s</error>', [$errorMessage]);
             $this->quit(1);
         }
 
-        if (empty($data['places'])) {
+        if (empty($data['candidates'])) {
             $this->outputLine('<error>No results found for "%s".</error>', [$query]);
             return;
         }
 
         $this->outputLine('');
-        $this->outputLine('<success>Found %d result(s):</success>', [count($data['places'])]);
+        $this->outputLine('<success>Found %d result(s):</success>', [count($data['candidates'])]);
         $this->outputLine('');
 
-        foreach ($data['places'] as $index => $place) {
-            $name = $place['displayName']['text'] ?? 'Unknown';
-            $address = $place['formattedAddress'] ?? '';
-            $placeId = $place['id'] ?? '';
+        foreach ($data['candidates'] as $index => $place) {
+            $name = $place['name'] ?? 'Unknown';
+            $address = $place['formatted_address'] ?? '';
+            $placeId = $place['place_id'] ?? '';
             $rating = $place['rating'] ?? '-';
-            $ratingCount = $place['userRatingCount'] ?? 0;
+            $ratingCount = $place['user_ratings_total'] ?? 0;
 
             $this->outputLine('  <b>%d. %s</b>', [$index + 1, $name]);
             $this->outputLine('     Address:  %s', [$address]);

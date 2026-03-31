@@ -1,7 +1,11 @@
+/* UpAssist.Neos.GoogleReviews — structural/layout only */
+/* Override these styles in your site package for branding */
+
 .google-reviews {
     --reviews-count: 5;
 }
 
+/* Summary */
 .google-reviews__summary {
     display: flex;
     align-items: center;
@@ -14,7 +18,6 @@
     font-size: 3rem;
     font-weight: 700;
     line-height: 1;
-    color: #1a1a1a;
 }
 
 .google-reviews__rating-details {
@@ -25,9 +28,9 @@
 
 .google-reviews__rating-count {
     font-size: 0.85rem;
-    color: #6b7280;
 }
 
+/* Grid */
 .google-reviews__grid {
     display: grid;
     grid-template-columns: repeat(var(--reviews-count), 1fr);
@@ -40,10 +43,8 @@
     }
 }
 
+/* Card */
 .google-reviews__card {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
@@ -79,9 +80,9 @@
 
 .google-reviews__date {
     font-size: 0.8rem;
-    color: #6b7280;
 }
 
+/* Stars */
 .google-reviews__stars {
     display: flex;
     gap: 0.125rem;
@@ -89,7 +90,6 @@
 
 .google-reviews__star {
     font-size: 1.1rem;
-    color: #d1d5db;
     line-height: 1;
 }
 
@@ -97,24 +97,20 @@
     color: #f59e0b;
 }
 
+/* Text */
 .google-reviews__text {
     font-size: 0.9rem;
     line-height: 1.5;
-    color: #374151;
     margin: 0;
 }
 
+/* Footer / CTA */
 .google-reviews__footer {
     margin-top: 2rem;
     text-align: center;
 }
 
-.google-reviews--empty {
-    padding: 2rem;
-    text-align: center;
-    background: #fef3c7;
-    border: 1px dashed #f59e0b;
-    border-radius: 0.5rem;
-    color: #92400e;
-    font-size: 0.9rem;
+.google-reviews__cta {
+    display: inline-block;
+    text-decoration: none;
 }

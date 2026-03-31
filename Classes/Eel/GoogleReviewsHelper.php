@@ -42,6 +42,6 @@ class GoogleReviewsHelper implements ProtectedContextAwareInterface
 
     public function allowsCallOfMethod($methodName): bool
     {
-        return true;
+        return in_array($methodName, ['getData', 'getReviews', 'getRating', 'getTotalReviews'], true);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace UpAssist\Neos\GoogleReviews\Service;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
 use Psr\Log\LoggerInterface;
@@ -216,23 +218,18 @@ class GoogleReviewsService
     protected function findPlaceIdNewApi(string $query, string $apiKey): array
     {
         $url = 'https://places.googleapis.com/v1/places:searchText';
-        $payload = json_encode(['textQuery' => $query]);
 
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => implode("\r\n", [
-                    'Content-Type: application/json',
-                    'X-Goog-Api-Key: ' . $apiKey,
-                    'X-Goog-FieldMask: places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount',
-                ]),
-                'content' => $payload,
-                'timeout' => 10,
-                'ignore_errors' => true,
-            ],
-        ]);
+        try {
+            $response = $this->httpPost($url, ['textQuery' => $query], [
+                'Content-Type' => 'application/json',
+                'X-Goog-Api-Key' => $apiKey,
+                'X-Goog-FieldMask' => 'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount',
+            ]);
+        } catch (GuzzleException $e) {
+            $this->logger->error('UpAssist.Neos.GoogleReviews: ' . $e->getMessage());
+            return ['error' => 'Failed to connect to Google Places API'];
+        }
 
-        $response = @file_get_contents($url, false, $context);
         if ($response === false) {
             return ['error' => 'Failed to connect to Google Places API'];
         }
@@ -256,26 +253,41 @@ class GoogleReviewsService
 
     protected function httpGet(string $url, array $headers = []): string|false
     {
-        $options = [
-            'http' => [
-                'method' => 'GET',
-                'timeout' => 10,
-                'ignore_errors' => true,
-            ],
-        ];
-
-        if (!empty($headers)) {
-            $options['http']['header'] = $headers;
+        try {
+            $client = new Client(['timeout' => 10]);
+            $response = $client->get($url, [
+                'headers' => $this->formatHeaders($headers),
+            ]);
+            return $response->getBody()->getContents();
+        } catch (GuzzleException $e) {
+            $this->logger->error('UpAssist.Neos.GoogleReviews: ' . $e->getMessage());
+            return false;
         }
+    }
 
-        $context = stream_context_create($options);
-        $response = @file_get_contents($url, false, $context);
+    protected function httpPost(string $url, array $body, array $headers = []): string|false
+    {
+        $client = new Client(['timeout' => 10]);
+        $response = $client->post($url, [
+            'headers' => $headers,
+            'json' => $body,
+        ]);
+        return $response->getBody()->getContents();
+    }
 
-        if ($response === false) {
-            $this->logger->error('UpAssist.Neos.GoogleReviews: Failed to connect to Google Places API');
+    /**
+     * Convert indexed header array ("Key: Value") to associative array ("Key" => "Value").
+     */
+    protected function formatHeaders(array $headers): array
+    {
+        $formatted = [];
+        foreach ($headers as $header) {
+            if (is_string($header) && str_contains($header, ':')) {
+                [$key, $value] = explode(':', $header, 2);
+                $formatted[trim($key)] = trim($value);
+            }
         }
-
-        return $response;
+        return $formatted;
     }
 
     protected function getCachedFallback(string $placeId): array

@@ -1,11 +1,13 @@
 {
+    "name": "upassist/neos-googlereviews",
     "description": "Google Reviews integration for Neos CMS — fetch and display Google Place reviews with caching",
+    "license": "MIT",
     "type": "neos-package",
     "require": {
-        "neos/neos": "*",
-        "neos/flow": "*"
+        "php": "^8.1",
+        "neos/neos": "^7.3 || ^8.0",
+        "neos/flow": "^7.3 || ^8.0"
     },
-    "name": "upassist/neos-googlereviews",
     "autoload": {
         "psr-4": {
             "UpAssist\\Neos\\GoogleReviews\\": "Classes/"

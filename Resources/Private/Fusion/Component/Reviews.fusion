@@ -13,6 +13,7 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
 
     renderer = afx`
         <div class="google-reviews" @if={props.reviews} style={'--reviews-count: ' + props.maxDisplayedReviews}>
+            <link rel="stylesheet" href={StaticResource.uri('UpAssist.Neos.GoogleReviews', 'Public/Styles/reviews.css')} />
             <div class="google-reviews__summary" @if={props.rating}>
                 <div class="google-reviews__rating-score">{String.toString(props.rating)}</div>
                 <div class="google-reviews__rating-details">

@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.1] - 2026-11-19
+
+### Fixed
+
+- The rendered reviews element now expires from the Neos content cache after `cacheLifetime`. Before, the page kept showing the reviews it first rendered, or an empty block after one failed fetch, until the page was edited or the caches were flushed.
+
 ## [1.1.0] - 2026-11-19
 
 ### Added

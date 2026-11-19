@@ -4,6 +4,20 @@ prototype(UpAssist.Neos.GoogleReviews:Content.Reviews) < prototype(Neos.Neos:Con
     maxDisplayedReviews = ${q(node).property('maxDisplayedReviews')}
     showAllReviewsLink = ${q(node).property('showAllReviewsLink')}
 
+    # Cached apart from the page, with the reviews' TTL as maximum lifetime,
+    # so new reviews (or a recovered API) show up without editing the page.
+    @cache {
+        mode = 'cached'
+        maximumLifetime = ${Configuration.setting('UpAssist.Neos.GoogleReviews.cacheLifetime')}
+        entryIdentifier {
+            node = ${GoogleReviews.cacheEntryIdentifier(node)}
+        }
+        entryTags {
+            1 = ${Neos.Caching.nodeTag(node)}
+            2 = ${Neos.Caching.nodeTag(site)}
+        }
+    }
+
     renderer = UpAssist.Neos.GoogleReviews:Component.Reviews {
         @apply.props = ${props}
     }

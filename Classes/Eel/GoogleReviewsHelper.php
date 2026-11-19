@@ -2,6 +2,7 @@
 
 namespace UpAssist\Neos\GoogleReviews\Eel;
 
+use Neos\Cache\CacheAwareInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use UpAssist\Neos\GoogleReviews\Service\GoogleReviewsService;
@@ -40,8 +41,21 @@ class GoogleReviewsHelper implements ProtectedContextAwareInterface
         return (int)($data['totalReviews'] ?? 0);
     }
 
+    /**
+     * Content cache entry identifier for a node that works on Neos 8 and Neos 9.
+     * Neos 8 nodes implement CacheAwareInterface themselves; Neos 9 nodes need
+     * NodeCacheEntryIdentifier.
+     */
+    public function cacheEntryIdentifier(object $node): string
+    {
+        if ($node instanceof CacheAwareInterface) {
+            return $node->getCacheEntryIdentifier();
+        }
+        return \Neos\Neos\Fusion\Cache\NodeCacheEntryIdentifier::fromNode($node)->getCacheEntryIdentifier();
+    }
+
     public function allowsCallOfMethod($methodName): bool
     {
-        return in_array($methodName, ['getData', 'getReviews', 'getRating', 'getTotalReviews'], true);
+        return in_array($methodName, ['getData', 'getReviews', 'getRating', 'getTotalReviews', 'cacheEntryIdentifier'], true);
     }
 }

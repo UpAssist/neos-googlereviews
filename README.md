@@ -6,7 +6,7 @@ Supports both the legacy Google Maps API and the new Google Places API (v1).
 
 ## Requirements
 
-- Neos CMS 7.3+ / 8.x
+- Neos CMS 8.3+ / 9.x
 - PHP 8.1+
 - A Google Cloud API key with the Places API enabled
 
@@ -15,6 +15,13 @@ Supports both the legacy Google Maps API and the new Google Places API (v1).
 ```bash
 composer require upassist/neos-googlereviews
 ```
+
+## Compatibility
+
+| Package | Neos | PHP |
+|---|---|---|
+| 1.1 | 8.3, 8.4, 9.0, 9.1, 9.2 | 8.1+ |
+| 1.0 | 7.3, 8.x | 8.1+ |
 
 ## Configuration
 
@@ -45,7 +52,7 @@ UpAssist:
 
 Insert the **Google Reviews** content element in the Neos backend. It displays a rating summary and individual review cards in a responsive grid.
 
-The element reads the Place ID from the nearest document node (via the `GooglePlaceId` mixin) or falls back to `defaultPlaceId` from settings.
+The element reads the Place ID from the site node (add the `GooglePlaceId` mixin to your homepage NodeType) or falls back to `defaultPlaceId` from settings.
 
 Editor options in the inspector:
 

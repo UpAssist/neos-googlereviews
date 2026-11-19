@@ -18,12 +18,12 @@ prototype(UpAssist.Neos.GoogleReviews:Component.ReviewCard) < prototype(Neos.Fus
                      loading="lazy"
                      referrerpolicy="no-referrer" />
                 <div class="google-reviews__meta">
-                    <span class="google-reviews__author">{props.authorName}</span>
-                    <span class="google-reviews__date">{props.relativePublishTime}</span>
+                    <span class="google-reviews__author">{String.htmlSpecialChars(props.authorName)}</span>
+                    <span class="google-reviews__date">{String.htmlSpecialChars(props.relativePublishTime)}</span>
                 </div>
             </div>
             <UpAssist.Neos.GoogleReviews:Component.StarRating rating={props.rating} />
-            <p class="google-reviews__text" @if={props.text}>{props.text}</p>
+            <p class="google-reviews__text" @if={props.text}>{String.htmlSpecialChars(props.text)}</p>
         </div>
     `
 }

@@ -37,15 +37,18 @@ class GoogleReviewsService
             return [];
         }
 
-        $cacheIdentifier = $this->getCacheIdentifier($placeId);
-
-        if ($this->cache->has($cacheIdentifier)) {
-            return $this->cache->get($cacheIdentifier);
+        $entry = $this->getCacheEntry($placeId);
+        if ($entry !== null && $entry['fetchedAt'] + $this->getCacheLifetime() > time()) {
+            return $entry['data'];
         }
 
         return $this->fetchAndCacheReviews($placeId);
     }
 
+    /**
+     * Fetch reviews from Google and cache them. When the API call fails, the
+     * last successfully fetched reviews are returned, however old they are.
+     */
     public function fetchAndCacheReviews(string $placeId): array
     {
         $placeId = $placeId ?: ($this->settings['defaultPlaceId'] ?? '');
@@ -54,14 +57,20 @@ class GoogleReviewsService
         }
 
         $reviews = $this->fetchFromGoogleApi($placeId);
-        $cacheIdentifier = $this->getCacheIdentifier($placeId);
 
         if (!empty($reviews)) {
-            $lifetime = (int)($this->settings['cacheLifetime'] ?? 86400);
-            $this->cache->set($cacheIdentifier, $reviews, [], $lifetime);
+            // Stored without expiry: freshness is checked against fetchedAt,
+            // so an old entry stays available as fallback when the API fails.
+            $this->cache->set(
+                $this->getCacheIdentifier($placeId),
+                ['fetchedAt' => time(), 'data' => $reviews],
+                [],
+                0
+            );
+            return $reviews;
         }
 
-        return $reviews;
+        return $this->getCachedFallback($placeId);
     }
 
     protected function fetchFromGoogleApi(string $placeId): array
@@ -93,7 +102,7 @@ class GoogleReviewsService
 
         $response = $this->httpGet($url);
         if ($response === false) {
-            return $this->getCachedFallback($placeId);
+            return [];
         }
 
         $data = json_decode($response, true);
@@ -101,7 +110,7 @@ class GoogleReviewsService
         if (!is_array($data) || ($data['status'] ?? '') !== 'OK') {
             $errorMessage = $data['error_message'] ?? ($data['status'] ?? 'Unknown error');
             $this->logger->error('UpAssist.Neos.GoogleReviews: Legacy API error — ' . $errorMessage);
-            return $this->getCachedFallback($placeId);
+            return [];
         }
 
         $maxReviews = (int)($this->settings['maxReviews'] ?? 5);
@@ -137,7 +146,7 @@ class GoogleReviewsService
         ]);
 
         if ($response === false) {
-            return $this->getCachedFallback($placeId);
+            return [];
         }
 
         $data = json_decode($response, true);
@@ -145,7 +154,7 @@ class GoogleReviewsService
         if (!is_array($data) || isset($data['error'])) {
             $errorMessage = $data['error']['message'] ?? 'Unknown error';
             $this->logger->error('UpAssist.Neos.GoogleReviews: New API error — ' . $errorMessage);
-            return $this->getCachedFallback($placeId);
+            return [];
         }
 
         $maxReviews = (int)($this->settings['maxReviews'] ?? 5);
@@ -292,12 +301,34 @@ class GoogleReviewsService
 
     protected function getCachedFallback(string $placeId): array
     {
-        $cacheIdentifier = $this->getCacheIdentifier($placeId);
-        if ($this->cache->has($cacheIdentifier)) {
-            $this->logger->info('UpAssist.Neos.GoogleReviews: Serving stale cached reviews as fallback');
-            return $this->cache->get($cacheIdentifier);
+        $entry = $this->getCacheEntry($placeId);
+        if ($entry === null) {
+            return [];
         }
-        return [];
+        $this->logger->info('UpAssist.Neos.GoogleReviews: Serving stale cached reviews as fallback');
+        return $entry['data'];
+    }
+
+    /**
+     * @return array{fetchedAt: int, data: array}|null
+     */
+    protected function getCacheEntry(string $placeId): ?array
+    {
+        $entry = $this->cache->get($this->getCacheIdentifier($placeId));
+        if (!is_array($entry) || $entry === []) {
+            return null;
+        }
+        if (!isset($entry['fetchedAt'], $entry['data'])) {
+            // Entry written by 1.1.x and earlier (plain reviews array): usable
+            // as fallback, but treated as expired so it gets refreshed.
+            return ['fetchedAt' => 0, 'data' => $entry];
+        }
+        return $entry;
+    }
+
+    protected function getCacheLifetime(): int
+    {
+        return (int)($this->settings['cacheLifetime'] ?? 86400);
     }
 
     public function clearCache(string $placeId = ''): void

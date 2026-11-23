@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.2] - 2026-11-23
+
+### Fixed
+
+- Stale fallback: when the Google API fails, the last fetched reviews are shown again. Before, the fallback only returned entries that had not expired yet, so after `cacheLifetime` a failed fetch left an empty block. Reviews are now cached without expiry and refreshed once they are older than `cacheLifetime`. Entries cached by 1.1.1 and earlier are refreshed on first use.
+- The "all reviews" link now also shows when only `defaultPlaceId` is set (no `googlePlaceId` on the site node).
+
 ## [1.1.1] - 2026-11-19
 
 ### Fixed

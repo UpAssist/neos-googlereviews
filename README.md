@@ -124,7 +124,7 @@ The grid uses a `--reviews-count` CSS custom property and collapses to a single 
 
 ## Caching
 
-Reviews are cached using Flow's file-based cache backend. On API errors, stale cached data is served as a fallback. Use the `clearcache` CLI command or wait for the TTL to expire. The content element is cached in the Neos content cache with the same `cacheLifetime` as its maximum lifetime, so the page picks up new reviews when the TTL expires, without editing the page.
+Reviews are cached using Flow's file-based cache backend and fetched again once they are older than `cacheLifetime`. On API errors, the last fetched reviews are served as a fallback, however old they are. Use the `clearcache` CLI command or wait for the TTL to expire. The content element is cached in the Neos content cache with the same `cacheLifetime` as its maximum lifetime, so the page picks up new reviews when the TTL expires, without editing the page.
 
 ## API versions
 

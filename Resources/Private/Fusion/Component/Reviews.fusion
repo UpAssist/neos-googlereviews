@@ -4,10 +4,14 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
     maxDisplayedReviews = 5
     showAllReviewsLink = true
 
+    # The Place ID the service actually uses: the given one or defaultPlaceId
+    resolvedPlaceId = ${props.placeId || Configuration.setting('UpAssist.Neos.GoogleReviews.defaultPlaceId')}
     reviews = ${GoogleReviews.getReviews(props.placeId)}
     rating = ${GoogleReviews.getRating(props.placeId)}
     totalReviews = ${GoogleReviews.getTotalReviews(props.placeId)}
-    allReviewsUrl = ${'https://search.google.com/local/reviews?placeid=' + props.placeId}
+    # Optional override; by default the URL is built from resolvedPlaceId in the
+    # renderer (a prop can't read another computed prop on Neos 8)
+    allReviewsUrl = null
     allReviewsLabel = ${I18n.translate('UpAssist.Neos.GoogleReviews:Component.Reviews:allReviewsLink')}
     reviewsOnGoogleLabel = ${I18n.translate('UpAssist.Neos.GoogleReviews:Component.Reviews:reviewsOnGoogle')}
 
@@ -34,8 +38,8 @@ prototype(UpAssist.Neos.GoogleReviews:Component.Reviews) < prototype(Neos.Fusion
                     />
                 </Neos.Fusion:Loop>
             </div>
-            <div class="google-reviews__footer" @if={props.showAllReviewsLink && props.placeId}>
-                <a href={props.allReviewsUrl} target="_blank" rel="noopener noreferrer" class="google-reviews__cta">
+            <div class="google-reviews__footer" @if={props.showAllReviewsLink && props.resolvedPlaceId}>
+                <a href={props.allReviewsUrl || 'https://search.google.com/local/reviews?placeid=' + String.rawUrlEncode(props.resolvedPlaceId)} target="_blank" rel="noopener noreferrer" class="google-reviews__cta">
                     {props.allReviewsLabel}
                 </a>
             </div>
